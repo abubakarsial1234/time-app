@@ -1,15 +1,25 @@
 # Base image: Python 3.9 slim version
-FROM python:3.9-slim
+FROM public.ecr.aws/docker/library/python:3.11-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install required dependencies
-# Flask = web framework, pytz = timezone support
-RUN pip install Flask pytz
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    tzdata \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code into the container
 COPY app.py .
+
+# Set timezone
+ENV TZ=UTC
 
 # Expose port 5000 to allow external access
 EXPOSE 5000
