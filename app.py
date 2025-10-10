@@ -125,15 +125,36 @@ def index():
             
             body {{ 
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
                 min-height: 100vh;
-                color: #333;
+                color: #ffffff;
                 transition: all 0.3s ease;
+                position: relative;
+                overflow-x: hidden;
             }}
             
-            body.dark-mode {{
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                color: #e0e0e0;
+            body::before {{
+                content: '';
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
+                border-radius: 50%;
+                z-index: 0;
+            }}
+            
+            body::after {{
+                content: '';
+                position: fixed;
+                bottom: 0;
+                right: -100px;
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
+                border-radius: 50%;
+                z-index: 0;
             }}
             
             body.white-theme {{
@@ -141,15 +162,27 @@ def index():
                 color: #333;
             }}
             
-            body.white-theme.dark-mode {{
-                background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            body.white-theme::before,
+            body.white-theme::after {{
+                display: none;
+            }}
+            
+            body.orange-theme {{
+                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
                 color: #333;
+            }}
+            
+            body.orange-theme::before,
+            body.orange-theme::after {{
+                display: none;
             }}
             
             .container {{
                 max-width: 1200px;
                 margin: 0 auto;
                 padding: 20px;
+                position: relative;
+                z-index: 1;
             }}
             
             .header {{
@@ -157,17 +190,12 @@ def index():
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 40px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(20px);
                 padding: 20px;
                 border-radius: 20px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                transition: all 0.3s ease;
-            }}
-            
-            body.dark-mode .header {{
-                background: rgba(0, 0, 0, 0.3);
                 border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
             }}
             
             body.white-theme .header {{
@@ -175,9 +203,9 @@ def index():
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }}
             
-            body.white-theme.dark-mode .header {{
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(0, 0, 0, 0.2);
+            body.orange-theme .header {{
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }}
             
             .logo {{
@@ -192,12 +220,13 @@ def index():
             .logo-icon {{
                 width: 40px;
                 height: 40px;
-                background: white;
+                background: #ff6b35;
                 border-radius: 50%;
                 display: flex; 
                 align-items: center;
                 justify-content: center; 
                 font-size: 20px;
+                color: white;
             }}
             
             .search-bar {{
@@ -214,6 +243,16 @@ def index():
                 background: rgba(255, 255, 255, 0.9);
                 font-size: 16px;
                 outline: none;
+                color: #333;
+            }}
+            
+            body.white-theme .search-bar input {{
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }}
+            
+            body.orange-theme .search-bar input {{
+                background: rgba(255, 255, 255, 0.9);
             }}
             
             .header-buttons {{
@@ -230,8 +269,8 @@ def index():
             }}
             
             .theme-btn {{
-                padding: 8px 12px;
-                border: 2px solid white;
+                padding: 8px 16px;
+                border: 2px solid #ff6b35;
                 border-radius: 20px;
                 background: transparent;
                 color: white;
@@ -239,31 +278,47 @@ def index():
                 cursor: pointer;
                 transition: all 0.3s ease;
                 font-size: 12px;
+                min-width: 60px;
             }}
             
             .theme-btn:hover {{
-                background: white;
-                color: #ff6b35;
+                background: rgba(255, 107, 53, 0.1);
             }}
             
             .theme-btn.active {{
+                background: #ff6b35;
+                color: white;
+            }}
+            
+            .theme-btn.white {{
+                border-color: #ff6b35;
+                color: #333;
                 background: white;
-                color: #ff6b35;
             }}
             
-            body.dark-mode .theme-btn {{
-                border-color: #e0e0e0;
-                color: #e0e0e0;
+            .theme-btn.white:hover {{
+                background: #f0f0f0;
             }}
             
-            body.dark-mode .theme-btn:hover {{
-                background: #e0e0e0;
-                color: #1a1a2e;
+            .theme-btn.white.active {{
+                background: white;
+                color: #333;
+                border-color: #ff6b35;
             }}
             
-            body.dark-mode .theme-btn.active {{
-                background: #e0e0e0;
-                color: #1a1a2e;
+            .theme-btn.dark {{
+                border-color: #ff6b35;
+                color: white;
+                background: transparent;
+            }}
+            
+            .theme-btn.dark:hover {{
+                background: rgba(255, 107, 53, 0.1);
+            }}
+            
+            .theme-btn.dark.active {{
+                background: #ff6b35;
+                color: white;
             }}
             
             .btn {{
@@ -283,52 +338,107 @@ def index():
             }}
             
             .main-clock {{
-                background: rgba(255, 255, 255, 0.95);
+                background: rgba(0, 0, 0, 0.4);
                 border-radius: 30px;
                 padding: 60px;
                 margin-bottom: 40px;
                 text-align: center;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                backdrop-filter: blur(10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+                           0 0 0 1px rgba(255, 107, 53, 0.2),
+                           inset 0 1px 0 rgba(255, 107, 53, 0.1);
+                backdrop-filter: blur(20px);
                 transition: all 0.3s ease;
+                position: relative;
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }}
             
-            body.dark-mode .main-clock {{
-                background: rgba(0, 0, 0, 0.4);
-                color: #e0e0e0;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            .main-clock::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent 0%, #ff6b35 50%, transparent 100%);
+                border-radius: 30px 30px 0 0;
             }}
             
             body.white-theme .main-clock {{
                 background: rgba(255, 255, 255, 0.98);
+                color: #333;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }}
+            
+            body.white-theme .main-clock::before {{
+                background: linear-gradient(90deg, transparent 0%, #ff6b35 50%, transparent 100%);
+            }}
+            
+            body.orange-theme .main-clock {{
+                background: rgba(255, 255, 255, 0.95);
+                color: #333;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }}
+            
+            body.orange-theme .main-clock::before {{
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
             }}
             
             .main-time {{
                 font-size: 120px;
                 font-weight: 300;
-                color: #333;
+                color: white;
                 margin-bottom: 20px;
                 letter-spacing: -2px;
             }}
             
+            body.white-theme .main-time {{
+                color: #333;
+            }}
+            
+            body.orange-theme .main-time {{
+                color: #333;
+            }}
+            
             .main-location {{
                 font-size: 32px;
-                color: #666;
+                color: white;
                 margin-bottom: 10px;
                 font-weight: 500;
             }}
             
             .main-date {{
                 font-size: 24px;
-                color: #888;
+                color: rgba(255, 255, 255, 0.8);
                 margin-bottom: 30px;
             }}
             
             .sun-info {{
                 font-size: 18px;
-                color: #666;
+                color: white;
                 margin-bottom: 20px;
+            }}
+            
+            body.white-theme .main-location,
+            body.white-theme .main-date,
+            body.white-theme .sun-info {{
+                color: #333;
+            }}
+            
+            body.white-theme .main-date {{
+                color: #666;
+            }}
+            
+            body.orange-theme .main-location,
+            body.orange-theme .main-date,
+            body.orange-theme .sun-info {{
+                color: #333;
+            }}
+            
+            body.orange-theme .main-date {{
+                color: #666;
             }}
             
             .format-toggles {{
@@ -339,15 +449,45 @@ def index():
             
             .format-btn {{
                 padding: 8px 16px;
-                border: 2px solid #ddd;
+                border: 2px solid #ff6b35;
                 border-radius: 20px;
                 background: transparent;
-                color: #666;
+                color: white;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                font-size: 12px;
+                min-width: 50px;
             }}
             
             .format-btn.active {{
+                background: #ff6b35;
+                color: white;
+                border-color: #ff6b35;
+            }}
+            
+            .format-btn:not(.active) {{
+                background: transparent;
+                color: white;
+                border-color: #ff6b35;
+            }}
+            
+            body.white-theme .format-btn {{
+                color: #333;
+                border-color: #ddd;
+            }}
+            
+            body.white-theme .format-btn.active {{
+                background: #333;
+                color: white;
+                border-color: #333;
+            }}
+            
+            body.orange-theme .format-btn {{
+                color: #333;
+                border-color: #ddd;
+            }}
+            
+            body.orange-theme .format-btn.active {{
                 background: #333;
                 color: white;
                 border-color: #333;
@@ -370,25 +510,32 @@ def index():
             }}
             
             .city-card {{
-                background: rgba(255, 255, 255, 0.95);
+                background: rgba(0, 0, 0, 0.4);
                 border-radius: 20px;
                 padding: 30px;
-                text-align: center;
+                text-align: center; 
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
                 cursor: pointer;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
             }}
             
-            body.dark-mode .city-card {{
-                background: rgba(0, 0, 0, 0.4);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: #e0e0e0;
+            .city-card.featured {{
+                background: rgba(255, 107, 53, 0.2);
+                border: 1px solid rgba(255, 107, 53, 0.3);
             }}
             
             body.white-theme .city-card {{
                 background: rgba(255, 255, 255, 0.98);
                 border: 1px solid rgba(0, 0, 0, 0.1);
+                color: #333;
+            }}
+            
+            body.orange-theme .city-card {{
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #333;
             }}
             
             .city-card:hover {{
@@ -560,9 +707,9 @@ def index():
                 </div>
                 <div class="header-buttons">
                     <div class="theme-controls">
-                        <button class="theme-btn active" onclick="setTheme('default')">Orange</button>
-                        <button class="theme-btn" onclick="setTheme('white')">White</button>
-                        <button class="theme-btn" onclick="toggleDarkMode()">🌙 Dark</button>
+                        <button class="theme-btn active" onclick="setTheme('orange')">Orange</button>
+                        <button class="theme-btn white" onclick="setTheme('white')">White</button>
+                        <button class="theme-btn dark" onclick="toggleDarkMode()">🌙 Dark</button>
                     </div>
                     <button class="btn">Log In</button>
                     <button class="btn">Get the App</button>
@@ -624,8 +771,8 @@ def index():
             let currentFormat = '24h';
             let updateInterval;
             let currentMainCity = 'Karachi';
-            let currentTheme = 'default';
-            let isDarkMode = false;
+            let currentTheme = 'dark';
+            let isDarkMode = true;
             
             function updateTime() {{
                 fetch(`/api/time/${{currentMainCity}}`)
@@ -638,9 +785,12 @@ def index():
             
             function setTheme(theme) {{
                 currentTheme = theme;
-                document.body.classList.remove('white-theme');
+                document.body.classList.remove('white-theme', 'orange-theme');
+                
                 if (theme === 'white') {{
                     document.body.classList.add('white-theme');
+                }} else if (theme === 'orange') {{
+                    document.body.classList.add('orange-theme');
                 }}
                 
                 // Update theme button states
@@ -654,7 +804,16 @@ def index():
             
             function toggleDarkMode() {{
                 isDarkMode = !isDarkMode;
-                document.body.classList.toggle('dark-mode');
+                
+                if (isDarkMode) {{
+                    document.body.classList.remove('white-theme', 'orange-theme');
+                }} else {{
+                    if (currentTheme === 'white') {{
+                        document.body.classList.add('white-theme');
+                    }} else if (currentTheme === 'orange') {{
+                        document.body.classList.add('orange-theme');
+                    }}
+                }}
                 
                 // Update dark mode button
                 const darkBtn = document.querySelector('.theme-btn[onclick="toggleDarkMode()"]');
