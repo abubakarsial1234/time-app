@@ -125,7 +125,8 @@ def index():
             
             body {{ 
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                /* --- CHANGED: Dark Green Gradient --- */
+                background: linear-gradient(135deg, #011F13 0%, #0A2D27 50%, #1E3A3A 100%);
                 min-height: 100vh;
                 color: #ffffff;
                 transition: all 0.3s ease;
@@ -140,7 +141,8 @@ def index():
                 right: 0;
                 width: 300px;
                 height: 300px;
-                background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
+                /* --- CHANGED: Green Glow --- */
+                background: radial-gradient(circle, rgba(61, 220, 132, 0.2) 0%, transparent 70%);
                 border-radius: 50%;
                 z-index: 0;
             }}
@@ -152,7 +154,8 @@ def index():
                 right: -100px;
                 width: 400px;
                 height: 400px;
-                background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
+                /* --- CHANGED: Green Glow --- */
+                background: radial-gradient(circle, rgba(61, 220, 132, 0.15) 0%, transparent 70%);
                 border-radius: 50%;
                 z-index: 0;
             }}
@@ -167,6 +170,7 @@ def index():
                 display: none;
             }}
             
+            /* This orange-theme is no longer used by buttons, but kept for reference */
             body.orange-theme {{
                 background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
                 color: #333;
@@ -202,12 +206,7 @@ def index():
                 background: rgba(255, 255, 255, 0.8);
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }}
-            
-            body.orange-theme .header {{
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }}
-            
+
             .logo {{
                 display: flex;
                 align-items: center;
@@ -220,13 +219,14 @@ def index():
             .logo-icon {{
                 width: 40px;
                 height: 40px;
-                background: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                background: #3DDC84;
                 border-radius: 50%;
                 display: flex; 
                 align-items: center;
                 justify-content: center; 
                 font-size: 20px;
-                color: white;
+                color: #111;
             }}
             
             .search-bar {{
@@ -250,11 +250,7 @@ def index():
                 background: rgba(255, 255, 255, 0.95);
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }}
-            
-            body.orange-theme .search-bar input {{
-                background: rgba(255, 255, 255, 0.9);
-            }}
-            
+
             .header-buttons {{
                 display: flex;
                 gap: 15px;
@@ -270,7 +266,8 @@ def index():
             
             .theme-btn {{
                 padding: 8px 16px;
-                border: 2px solid #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border: 2px solid #3DDC84;
                 border-radius: 20px;
                 background: transparent;
                 color: white;
@@ -282,16 +279,19 @@ def index():
             }}
             
             .theme-btn:hover {{
-                background: rgba(255, 107, 53, 0.1);
+                /* --- CHANGED: Accent Color Glow --- */
+                background: rgba(61, 220, 132, 0.1);
             }}
             
             .theme-btn.active {{
-                background: #ff6b35;
-                color: white;
+                /* --- CHANGED: Accent Color --- */
+                background: #3DDC84;
+                color: #111;
             }}
             
             .theme-btn.white {{
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border-color: #3DDC84;
                 color: #333;
                 background: white;
             }}
@@ -303,22 +303,26 @@ def index():
             .theme-btn.white.active {{
                 background: white;
                 color: #333;
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border-color: #3DDC84;
             }}
             
             .theme-btn.dark {{
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border-color: #3DDC84;
                 color: white;
                 background: transparent;
             }}
             
             .theme-btn.dark:hover {{
-                background: rgba(255, 107, 53, 0.1);
+                /* --- CHANGED: Accent Color Glow --- */
+                background: rgba(61, 220, 132, 0.1);
             }}
             
             .theme-btn.dark.active {{
-                background: #ff6b35;
-                color: white;
+                /* --- CHANGED: Accent Color --- */
+                background: #3DDC84;
+                color: #111;
             }}
             
             .btn {{
@@ -334,7 +338,8 @@ def index():
             
             .btn:hover {{
                 background: white;
-                color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                color: #0A2D27;
             }}
             
             .main-clock {{
@@ -344,8 +349,8 @@ def index():
                 margin-bottom: 40px;
                 text-align: center;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-                           0 0 0 1px rgba(255, 107, 53, 0.2),
-                           inset 0 1px 0 rgba(255, 107, 53, 0.1);
+                            0 0 0 1px rgba(61, 220, 132, 0.2),
+                            inset 0 1px 0 rgba(61, 220, 132, 0.1);
                 backdrop-filter: blur(20px);
                 transition: all 0.3s ease;
                 position: relative;
@@ -360,7 +365,8 @@ def index():
                 left: 0;
                 right: 0;
                 height: 2px;
-                background: linear-gradient(90deg, transparent 0%, #ff6b35 50%, transparent 100%);
+                /* --- CHANGED: Accent Color --- */
+                background: linear-gradient(90deg, transparent 0%, #3DDC84 50%, transparent 100%);
                 border-radius: 30px 30px 0 0;
             }}
             
@@ -372,18 +378,8 @@ def index():
             }}
             
             body.white-theme .main-clock::before {{
-                background: linear-gradient(90deg, transparent 0%, #ff6b35 50%, transparent 100%);
-            }}
-            
-            body.orange-theme .main-clock {{
-                background: rgba(255, 255, 255, 0.95);
-                color: #333;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }}
-            
-            body.orange-theme .main-clock::before {{
-                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+                /* --- CHANGED: Accent Color --- */
+                background: linear-gradient(90deg, transparent 0%, #3DDC84 50%, transparent 100%);
             }}
             
             .main-time {{
@@ -397,11 +393,7 @@ def index():
             body.white-theme .main-time {{
                 color: #333;
             }}
-            
-            body.orange-theme .main-time {{
-                color: #333;
-            }}
-            
+
             .main-location {{
                 font-size: 32px;
                 color: white;
@@ -431,16 +423,6 @@ def index():
                 color: #666;
             }}
             
-            body.orange-theme .main-location,
-            body.orange-theme .main-date,
-            body.orange-theme .sun-info {{
-                color: #333;
-            }}
-            
-            body.orange-theme .main-date {{
-                color: #666;
-            }}
-            
             .format-toggles {{
                 display: flex;
                 gap: 10px;
@@ -449,7 +431,8 @@ def index():
             
             .format-btn {{
                 padding: 8px 16px;
-                border: 2px solid #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border: 2px solid #3DDC84;
                 border-radius: 20px;
                 background: transparent;
                 color: white;
@@ -460,15 +443,17 @@ def index():
             }}
             
             .format-btn.active {{
-                background: #ff6b35;
-                color: white;
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                background: #3DDC84;
+                color: #111;
+                border-color: #3DDC84;
             }}
             
             .format-btn:not(.active) {{
                 background: transparent;
                 color: white;
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border-color: #3DDC84;
             }}
             
             body.white-theme .format-btn {{
@@ -477,17 +462,6 @@ def index():
             }}
             
             body.white-theme .format-btn.active {{
-                background: #333;
-                color: white;
-                border-color: #333;
-            }}
-            
-            body.orange-theme .format-btn {{
-                color: #333;
-                border-color: #ddd;
-            }}
-            
-            body.orange-theme .format-btn.active {{
                 background: #333;
                 color: white;
                 border-color: #333;
@@ -522,8 +496,9 @@ def index():
             }}
             
             .city-card.featured {{
-                background: rgba(255, 107, 53, 0.2);
-                border: 1px solid rgba(255, 107, 53, 0.3);
+                /* --- CHANGED: Accent Color Glow --- */
+                background: rgba(61, 220, 132, 0.1);
+                border: 1px solid rgba(61, 220, 132, 0.2);
             }}
             
             body.white-theme .city-card {{
@@ -532,20 +507,9 @@ def index():
                 color: #333;
             }}
             
-            body.orange-theme .city-card {{
-                background: rgba(255, 255, 255, 0.95);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                color: #333;
-            }}
-            
             .city-card:hover {{
                 transform: translateY(-5px);
                 box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            }}
-            
-            .city-card.featured {{
-                background: #333;
-                color: white;
             }}
             
             .city-time {{
@@ -659,7 +623,8 @@ def index():
             
             .city-item:hover {{
                 background: #e9ecef;
-                border-color: #ff6b35;
+                /* --- CHANGED: Accent Color --- */
+                border-color: #3DDC84;
             }}
             
             .city-item-name {{
@@ -696,7 +661,6 @@ def index():
     </head>
     <body>
         <div class="container">
-            <!-- Header -->
             <div class="header">
                 <div class="logo">
                     <div class="logo-icon">🕐</div>
@@ -707,16 +671,15 @@ def index():
                 </div>
                 <div class="header-buttons">
                     <div class="theme-controls">
-                        <button class="theme-btn active" onclick="setTheme('orange')">Orange</button>
+                        <button class="theme-btn" onclick="setTheme('orange')">Orange</button>
                         <button class="theme-btn white" onclick="setTheme('white')">White</button>
-                        <button class="theme-btn dark" onclick="toggleDarkMode()">🌙 Dark</button>
+                        <button class="theme-btn dark active" onclick="setTheme('dark')">🌙 Dark</button>
                     </div>
                     <button class="btn">Log In</button>
                     <button class="btn">Get the App</button>
                 </div>
             </div>
             
-            <!-- Main Clock Display -->
             <div class="main-clock">
                 <div class="main-time" id="mainTime">{pakistan_time["time"]}</div>
                 <div class="main-location">Karachi, {WORLD_CITIES["Karachi"]["country"]}</div>
@@ -730,12 +693,10 @@ def index():
                 </div>
             </div>
             
-            <!-- Slogan -->
             <div class="slogan">
                 Life moves fast. Stay on time and enjoy every moment!
             </div>
             
-            <!-- Featured Cities Grid -->
             <div class="cities-grid">
                 {''.join([f'''
                 <div class="city-card {'featured' if city == 'Karachi' else ''}" onclick="setMainCity('{city}')">
@@ -753,7 +714,6 @@ def index():
                 </div>
             </div>
             
-            <!-- All Cities Section -->
             <div class="all-cities" id="allCities" style="display: none;">
                 <h2>All Available Cities</h2>
                 <div class="cities-list">
@@ -772,8 +732,7 @@ def index():
             let updateInterval;
             let currentMainCity = 'Karachi';
             let currentTheme = 'dark';
-            let isDarkMode = true;
-            
+
             function updateTime() {{
                 fetch(`/api/time/${{currentMainCity}}`)
                     .then(response => response.json())
@@ -784,41 +743,14 @@ def index():
             }}
             
             function setTheme(theme) {{
-                currentTheme = theme;
-                document.body.classList.remove('white-theme', 'orange-theme');
-                
-                if (theme === 'white') {{
-                    document.body.classList.add('white-theme');
-                }} else if (theme === 'orange') {{
-                    document.body.classList.add('orange-theme');
+                document.body.className = ''; // Clear all classes
+                if (theme !== 'dark') {{
+                   document.body.classList.add(theme + '-theme');
                 }}
                 
                 // Update theme button states
-                document.querySelectorAll('.theme-btn').forEach(btn => {{
-                    btn.classList.remove('active');
-                    if (btn.textContent.toLowerCase().includes(theme)) {{
-                        btn.classList.add('active');
-                    }}
-                }});
-            }}
-            
-            function toggleDarkMode() {{
-                isDarkMode = !isDarkMode;
-                
-                if (isDarkMode) {{
-                    document.body.classList.remove('white-theme', 'orange-theme');
-                }} else {{
-                    if (currentTheme === 'white') {{
-                        document.body.classList.add('white-theme');
-                    }} else if (currentTheme === 'orange') {{
-                        document.body.classList.add('orange-theme');
-                    }}
-                }}
-                
-                // Update dark mode button
-                const darkBtn = document.querySelector('.theme-btn[onclick="toggleDarkMode()"]');
-                darkBtn.textContent = isDarkMode ? '☀️ Light' : '🌙 Dark';
-                darkBtn.classList.toggle('active', isDarkMode);
+                document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.theme-btn[onclick="setTheme('${{theme}}')"]`).classList.add('active');
             }}
             
             function toggleFormat(format) {{
@@ -902,6 +834,9 @@ def index():
                 }}
             }});
             
+            // Set initial theme
+            setTheme('dark');
+            
             // Update time every second
             updateInterval = setInterval(updateTime, 1000);
         </script>
@@ -933,4 +868,3 @@ def get_cities():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
