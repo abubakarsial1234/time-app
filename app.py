@@ -87,14 +87,14 @@ def get_sunrise_sunset(city_name):
 @app.route('/')
 def index():
     """Main page showing world clock interface"""
-    # Get current time for London as the main display
-    london_time = get_city_time("London")
-    london_timezone = pytz.timezone(WORLD_CITIES["London"]["timezone"])
-    now_london = datetime.now(london_timezone)
-    london_sunrise_sunset = get_sunrise_sunset("London")
+    # Get current time for Karachi (Pakistan) as the main display
+    pakistan_time = get_city_time("Karachi")
+    pakistan_timezone = pytz.timezone(WORLD_CITIES["Karachi"]["timezone"])
+    now_pakistan = datetime.now(pakistan_timezone)
+    pakistan_sunrise_sunset = get_sunrise_sunset("Karachi")
     
     # Get times for featured cities
-    featured_cities = ["Los Angeles", "New York", "Paris", "Tokyo"]
+    featured_cities = ["Karachi", "London", "New York", "Dubai"]
     city_times = {}
     
     for city in featured_cities:
@@ -123,10 +123,26 @@ def index():
                 box-sizing: border-box;
             }}
             
-            body {{
+            body {{ 
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
                 min-height: 100vh;
+                color: #333;
+                transition: all 0.3s ease;
+            }}
+            
+            body.dark-mode {{
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: #e0e0e0;
+            }}
+            
+            body.white-theme {{
+                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                color: #333;
+            }}
+            
+            body.white-theme.dark-mode {{
+                background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
                 color: #333;
             }}
             
@@ -146,6 +162,22 @@ def index():
                 padding: 20px;
                 border-radius: 20px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+            }}
+            
+            body.dark-mode .header {{
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }}
+            
+            body.white-theme .header {{
+                background: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+            }}
+            
+            body.white-theme.dark-mode .header {{
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(0, 0, 0, 0.2);
             }}
             
             .logo {{
@@ -162,9 +194,9 @@ def index():
                 height: 40px;
                 background: white;
                 border-radius: 50%;
-                display: flex;
+                display: flex; 
                 align-items: center;
-                justify-content: center;
+                justify-content: center; 
                 font-size: 20px;
             }}
             
@@ -187,6 +219,51 @@ def index():
             .header-buttons {{
                 display: flex;
                 gap: 15px;
+                align-items: center;
+            }}
+            
+            .theme-controls {{
+                display: flex;
+                gap: 10px;
+                align-items: center; 
+                margin-right: 15px;
+            }}
+            
+            .theme-btn {{
+                padding: 8px 12px;
+                border: 2px solid white;
+                border-radius: 20px;
+                background: transparent;
+                color: white;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 12px;
+            }}
+            
+            .theme-btn:hover {{
+                background: white;
+                color: #ff6b35;
+            }}
+            
+            .theme-btn.active {{
+                background: white;
+                color: #ff6b35;
+            }}
+            
+            body.dark-mode .theme-btn {{
+                border-color: #e0e0e0;
+                color: #e0e0e0;
+            }}
+            
+            body.dark-mode .theme-btn:hover {{
+                background: #e0e0e0;
+                color: #1a1a2e;
+            }}
+            
+            body.dark-mode .theme-btn.active {{
+                background: #e0e0e0;
+                color: #1a1a2e;
             }}
             
             .btn {{
@@ -213,6 +290,18 @@ def index():
                 text-align: center;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
                 backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }}
+            
+            body.dark-mode .main-clock {{
+                background: rgba(0, 0, 0, 0.4);
+                color: #e0e0e0;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }}
+            
+            body.white-theme .main-clock {{
+                background: rgba(255, 255, 255, 0.98);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
             }}
             
             .main-time {{
@@ -289,6 +378,17 @@ def index():
                 cursor: pointer;
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.2);
+            }}
+            
+            body.dark-mode .city-card {{
+                background: rgba(0, 0, 0, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #e0e0e0;
+            }}
+            
+            body.white-theme .city-card {{
+                background: rgba(255, 255, 255, 0.98);
+                border: 1px solid rgba(0, 0, 0, 0.1);
             }}
             
             .city-card:hover {{
@@ -437,7 +537,7 @@ def index():
                 }}
                 
                 .search-bar {{
-                    margin: 0;
+                margin: 0; 
                     max-width: 100%;
                 }}
                 
@@ -459,6 +559,11 @@ def index():
                     <input type="text" placeholder="Q Search" id="searchInput">
                 </div>
                 <div class="header-buttons">
+                    <div class="theme-controls">
+                        <button class="theme-btn active" onclick="setTheme('default')">Orange</button>
+                        <button class="theme-btn" onclick="setTheme('white')">White</button>
+                        <button class="theme-btn" onclick="toggleDarkMode()">🌙 Dark</button>
+                    </div>
                     <button class="btn">Log In</button>
                     <button class="btn">Get the App</button>
                 </div>
@@ -466,11 +571,11 @@ def index():
             
             <!-- Main Clock Display -->
             <div class="main-clock">
-                <div class="main-time" id="mainTime">{london_time["time"]}</div>
-                <div class="main-location">London, {WORLD_CITIES["London"]["country"]}</div>
-                <div class="main-date">{london_time["date"]}</div>
+                <div class="main-time" id="mainTime">{pakistan_time["time"]}</div>
+                <div class="main-location">Karachi, {WORLD_CITIES["Karachi"]["country"]}</div>
+                <div class="main-date">{pakistan_time["date"]}</div>
                 <div class="sun-info">
-                    Sun ☀️: {london_sunrise_sunset["sunrise"]} - {london_sunrise_sunset["sunset"]} ({london_sunrise_sunset["duration"]})
+                    Sun ☀️: {pakistan_sunrise_sunset["sunrise"]} - {pakistan_sunrise_sunset["sunset"]} ({pakistan_sunrise_sunset["duration"]})
                 </div>
                 <div class="format-toggles">
                     <button class="format-btn" onclick="toggleFormat('12h')">12h</button>
@@ -486,7 +591,7 @@ def index():
             <!-- Featured Cities Grid -->
             <div class="cities-grid">
                 {''.join([f'''
-                <div class="city-card {'featured' if city == 'London' else ''}" onclick="setMainCity('{city}')">
+                <div class="city-card {'featured' if city == 'Karachi' else ''}" onclick="setMainCity('{city}')">
                     <div class="city-time">{city_times[city]["time"]}</div>
                     <div class="city-name">{city}</div>
                     <div class="city-country">{city_times[city]["country"]}</div>
@@ -518,14 +623,43 @@ def index():
         <script>
             let currentFormat = '24h';
             let updateInterval;
+            let currentMainCity = 'Karachi';
+            let currentTheme = 'default';
+            let isDarkMode = false;
             
             function updateTime() {{
-                fetch('/api/time/London')
+                fetch(`/api/time/${{currentMainCity}}`)
                     .then(response => response.json())
                     .then(data => {{
                         document.getElementById('mainTime').textContent = data.time;
                     }})
                     .catch(error => console.error('Error:', error));
+            }}
+            
+            function setTheme(theme) {{
+                currentTheme = theme;
+                document.body.classList.remove('white-theme');
+                if (theme === 'white') {{
+                    document.body.classList.add('white-theme');
+                }}
+                
+                // Update theme button states
+                document.querySelectorAll('.theme-btn').forEach(btn => {{
+                    btn.classList.remove('active');
+                    if (btn.textContent.toLowerCase().includes(theme)) {{
+                        btn.classList.add('active');
+                    }}
+                }});
+            }}
+            
+            function toggleDarkMode() {{
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('dark-mode');
+                
+                // Update dark mode button
+                const darkBtn = document.querySelector('.theme-btn[onclick="toggleDarkMode()"]');
+                darkBtn.textContent = isDarkMode ? '☀️ Light' : '🌙 Dark';
+                darkBtn.classList.toggle('active', isDarkMode);
             }}
             
             function toggleFormat(format) {{
@@ -536,6 +670,7 @@ def index():
             }}
             
             function setMainCity(city) {{
+                currentMainCity = city;
                 fetch(`/api/time/${{city}}`)
                     .then(response => response.json())
                     .then(data => {{
@@ -556,11 +691,23 @@ def index():
                 allCities.style.display = allCities.style.display === 'none' ? 'block' : 'none';
             }}
             
-            // Search functionality
+            // Enhanced search functionality
             document.getElementById('searchInput').addEventListener('input', function(e) {{
-                const searchTerm = e.target.value.toLowerCase();
-                const cityItems = document.querySelectorAll('.city-item');
+                const searchTerm = e.target.value.toLowerCase().trim();
                 
+                if (searchTerm.length === 0) {{
+                    // Show all cities when search is empty
+                    document.querySelectorAll('.city-item').forEach(item => {{
+                        item.style.display = 'block';
+                    }});
+                    document.querySelectorAll('.city-card').forEach(card => {{
+                        card.style.display = 'block';
+                    }});
+                    return;
+                }}
+                
+                // Search in all cities section
+                const cityItems = document.querySelectorAll('.city-item');
                 cityItems.forEach(item => {{
                     const cityName = item.querySelector('.city-item-name').textContent.toLowerCase();
                     const country = item.querySelector('.city-item-country').textContent.toLowerCase();
@@ -571,6 +718,29 @@ def index():
                         item.style.display = 'none';
                     }}
                 }});
+                
+                // Search in featured cities
+                const cityCards = document.querySelectorAll('.city-card');
+                cityCards.forEach(card => {{
+                    const cityName = card.querySelector('.city-name').textContent.toLowerCase();
+                    const country = card.querySelector('.city-country').textContent.toLowerCase();
+                    
+                    if (cityName.includes(searchTerm) || country.includes(searchTerm)) {{
+                        card.style.display = 'block';
+                    }} else {{
+                        card.style.display = 'none';
+                    }}
+                }});
+                
+                // Auto-select first matching city if found
+                const matchingCities = Array.from(cityItems).filter(item => 
+                    item.style.display !== 'none'
+                );
+                
+                if (matchingCities.length === 1 && searchTerm.length > 2) {{
+                    const cityName = matchingCities[0].querySelector('.city-item-name').textContent;
+                    setMainCity(cityName);
+                }}
             }});
             
             // Update time every second
