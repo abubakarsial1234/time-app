@@ -2,7 +2,7 @@ name: Build and Deploy to Prod ECS
 
 on:
   push:
-    branches: [ "main" ] # Jab main branch par code push ho
+    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -14,18 +14,19 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.SIAL_BHAI_ACC_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SIAL_BHAI_ACC_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.SIAL_BHAI_ACC_AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag, and Push Image
+      - name: Build, Tag, and Push Image to ECR
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sdk-cdk-prod-repo
+          ECR_REPOSITORY: sdk-cdk-git-first-ecr  # Match: Registry Module
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app-sdk
@@ -35,7 +36,7 @@ jobs:
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          service: prod-sdk-service
-          cluster: prod-sdk-cluster
-          image: ${{ steps.login-ecr.outputs.registry }}/sdk-cdk-prod-repo:${{ github.sha }}
+          service: sdk-cdk-git-first-cluster   # Match: compute_ecs_prod.py
+          cluster: sdk-cdk-git-first-cluster   # Match: compute_ecs_prod.py
+          image: ${{ steps.build-image.outputs.image }}
           wait-for-service-stability: true
