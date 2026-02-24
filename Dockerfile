@@ -1,28 +1,21 @@
-# Base image: Python 3.9 slim version
+# Base image
 FROM public.ecr.aws/docker/library/python:3.11-slim
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    tzdata \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies
+RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# Requirements copy karein
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code into the container
+# App code copy karein
 COPY app.py .
 
-# Set timezone
-ENV TZ=UTC
+# ECS ke liye Port 80 expose karein (Match with CDK)
+EXPOSE 80
 
-# Expose port 5000 to allow external access
-EXPOSE 5000
-
-# Command to run the application when the container starts
+# App start karein
 CMD ["python", "app.py"]
