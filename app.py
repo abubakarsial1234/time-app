@@ -867,4 +867,5 @@ def get_cities():
     return jsonify(WORLD_CITIES)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Port 5000 se badal kar 80 kar diya taake ECS se match kare
+    app.run(host='0.0.0.0', port=80, debug=False)
