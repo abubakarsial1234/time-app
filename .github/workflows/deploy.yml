@@ -26,17 +26,18 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sdk-cdk-git-first-ecr  # Match: Registry Module
+          ECR_REPOSITORY: sdk-cdk-git-first-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app-sdk
+          # Path updated to ./app-cdk based on your structure
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app-cdk
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          service: sdk-cdk-git-first-cluster   # Match: compute_ecs_prod.py
-          cluster: sdk-cdk-git-first-cluster   # Match: compute_ecs_prod.py
+          service: sdk-cdk-git-first-cluster
+          cluster: sdk-cdk-git-first-cluster
           image: ${{ steps.build-image.outputs.image }}
           wait-for-service-stability: true
