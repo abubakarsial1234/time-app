@@ -29,20 +29,18 @@ jobs:
           ECR_REPOSITORY: sdk-cdk-git-first-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # 1. Image Build karein (SHA Tag ke sath)
+          # 1. Image Build (Root context '.')
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           
-          # 2. Usi image par "latest" ka sticker (Tag) lagayen [NEW STEP]
+          # 2. Latest Tag lagana
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-          # 3. Dono Tags ko Push karein [NEW STEP]
+          # 3. Dono Push karna
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           
-          # Deployment ke liye hum specific SHA tag hi use karenge (Best Practice)
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # --- Task Definition Download Step ---
       - name: Download Task Definition
         run: |
           TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-git-first-cluster --query "services[0].taskDefinition" --output text)
@@ -55,4 +53,7 @@ jobs:
           service: sdk-cdk-git-first-cluster
           cluster: sdk-cdk-git-first-cluster
           image: ${{ steps.build-image.outputs.image }}
+          # --- YE SABSE ZAROORI HAI ---
+          container-name: prod-container
+          # ----------------------------
           wait-for-service-stability: true
