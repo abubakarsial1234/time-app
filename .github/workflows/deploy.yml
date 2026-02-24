@@ -14,7 +14,6 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          # Aapke custom secrets
           aws-access-key-id: ${{ secrets.SIAL_BHAI_ACC_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.SIAL_BHAI_ACC_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.SIAL_BHAI_ACC_AWS_REGION }}
@@ -27,18 +26,28 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sdk-cdk-git-first-ecr  # Hardcoded
+          ECR_REPOSITORY: sdk-cdk-git-first-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # CHANGE IS HERE: Path is now '.' (current directory)
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      # --- NAYA STEP START ---
+      - name: Download Task Definition
+        run: |
+          # AWS se pooch rahe hain ke Service abhi kaunsi Task Def use kar rahi hai
+          TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-git-first-cluster --query "services[0].taskDefinition" --output text)
+          
+          # Us Task Definition ko download kar ke file mein save kar rahe hain
+          aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition > task-definition.json
+      # --- NAYA STEP END ---
+
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          service: sdk-cdk-git-first-cluster   # Hardcoded
-          cluster: sdk-cdk-git-first-cluster   # Hardcoded
-          image: ${{ steps.build-image.outputs.image }}
+          task-definition: task-definition.json # Ab hum file provide kar rahe hain
+          service: sdk-cdk-git-first-cluster
+          cluster: sdk-cdk-git-first-cluster
+          image: ${{ steps.build-image.outputs.image }} # Ye image us file mein update ho jayega
           wait-for-service-stability: true
