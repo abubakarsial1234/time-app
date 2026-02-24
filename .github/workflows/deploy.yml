@@ -29,13 +29,13 @@ jobs:
           ECR_REPOSITORY: sdk-cdk-git-first-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # 1. Image Build (Root context '.')
+          # 1. Image Build karein
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           
-          # 2. Latest Tag lagana
+          # 2. Latest Tag lagayen
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-          # 3. Dono Push karna
+          # 3. Dono Push karein
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           
@@ -43,17 +43,25 @@ jobs:
 
       - name: Download Task Definition
         run: |
+          # AWS se current chalne wali task definition download karein
           TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-git-first-cluster --query "services[0].taskDefinition" --output text)
           aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition > task-definition.json
 
-      - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      # --- 🛑 YE STEP NAYA HAI (Game Changer) 🛑 ---
+      # Ye step JSON file khol kar purani image hata kar nayi lagayega
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
+          container-name: prod-container
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          # Ab hum wo file deploy karenge jo upar wale step ne edit ki hai
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: sdk-cdk-git-first-cluster
           cluster: sdk-cdk-git-first-cluster
-          image: ${{ steps.build-image.outputs.image }}
-          # --- YE SABSE ZAROORI HAI ---
-          container-name: prod-container
-          # ----------------------------
           wait-for-service-stability: true
