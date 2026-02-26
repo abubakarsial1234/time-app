@@ -26,7 +26,8 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sdk-cdk-git-first-ecr
+          # ✅ CORRECTED: Screenshot ke mutabik sahi naam
+          ECR_REPOSITORY: sdk-cdk-import-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # 1. Image Build karein
@@ -44,11 +45,11 @@ jobs:
       - name: Download Task Definition
         run: |
           # AWS se current chalne wali task definition download karein
-          TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-git-first-cluster --query "services[0].taskDefinition" --output text)
+          # ✅ CORRECTED: Cluster Name 'sdk-cdk-git-first-cluster' hai lekin Service Name 'sdk-cdk-task-import-service-jh7qispg' hai
+          TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-task-import-service-jh7qispg --query "services[0].taskDefinition" --output text)
+          
           aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition > task-definition.json
 
-      # --- 🛑 YE STEP NAYA HAI (Game Changer) 🛑 ---
-      # Ye step JSON file khol kar purani image hata kar nayi lagayega
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -60,8 +61,8 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          # Ab hum wo file deploy karenge jo upar wale step ne edit ki hai
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: sdk-cdk-git-first-cluster
+          # ✅ CORRECTED: Service ka naam screenshot se match kiya hai
+          service: sdk-cdk-task-import-service-jh7qispg
           cluster: sdk-cdk-git-first-cluster
           wait-for-service-stability: true
