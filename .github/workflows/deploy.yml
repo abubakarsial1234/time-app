@@ -26,29 +26,22 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # ✅ CORRECTED: Screenshot ke mutabik sahi naam
           ECR_REPOSITORY: sdk-cdk-import-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # 1. Image Build karein
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          
-          # 2. Latest Tag lagayen
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-          # 3. Dono Push karein
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download Task Definition
         run: |
-          # AWS se current chalne wali task definition download karein
-          # ✅ CORRECTED: Cluster Name 'sdk-cdk-git-first-cluster' hai lekin Service Name 'sdk-cdk-task-import-service-jh7qispg' hai
+          # 1. ARN retrieve karein
           TASK_DEF_ARN=$(aws ecs describe-services --cluster sdk-cdk-git-first-cluster --services sdk-cdk-task-import-service-jh7qispg --query "services[0].taskDefinition" --output text)
           
-          aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition > task-definition.json
+          # 2. 🔥 FIX: 'enableFaultInjection' ko remove karke save karein 🔥
+          aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition | jq 'del(.enableFaultInjection)' > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -62,7 +55,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          # ✅ CORRECTED: Service ka naam screenshot se match kiya hai
           service: sdk-cdk-task-import-service-jh7qispg
           cluster: sdk-cdk-git-first-cluster
           wait-for-service-stability: true
