@@ -29,41 +29,30 @@ jobs:
           ECR_REPOSITORY: sdk-cdk-import-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # 1. Build and Tag
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          
-          # 2. Push to ECR
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          
-          # 3. Output image URI for next steps
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download Task Definition
         run: |
-          # ✅ CORRECTED: Naya Service Name jo aapki screenshot mein hai
-          SERVICE_NAME="sdk-cdk-task-import-service-lu412qoq"
+          # ✅ CORRECTED: Naya Service Name jo aapki latest screenshot (image_4315c0.png) mein hai
+          SERVICE_NAME="sdk-cdk-task-import-service-h08by5gd"
           CLUSTER_NAME="sdk-cdk-git-first-cluster"
 
           # 1. Latest Task ARN retrieve karein
           TASK_DEF_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME --query "services[0].taskDefinition" --output text)
           
-          # 2. Check karein ke ARN mila ya nahi (Security Check)
+          # 2. Check karein ke ARN mila ya nahi
           if [ "$TASK_DEF_ARN" == "None" ] || [ -z "$TASK_DEF_ARN" ]; then
-            echo "❌ Error: AWS se Task Definition ARN nahi mil saka. Check karein ke service name sahi hai."
+            echo "❌ Error: AWS se Task Definition ARN nahi mil saka. Service name check karein."
             exit 1
           fi
 
-          # 3. JSON download karein aur saare fuzool fields delete karein (jq use karke)
+          # 3. JSON download aur cleanup
           aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query taskDefinition | \
           jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy, .enableFaultInjection)' > task-definition.json
-          
-          # 4. Debug: Check karein ke file khali to nahi?
-          if [ ! -s task-definition.json ]; then
-            echo "❌ Error: task-definition.json file khali hai!"
-            exit 1
-          fi
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -77,6 +66,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: sdk-cdk-task-import-service-lu412qoq
+          # ✅ CORRECTED: Naya Service Name yahan bhi update kiya hai
+          service: sdk-cdk-task-import-service-h08by5gd
           cluster: sdk-cdk-git-first-cluster
           wait-for-service-stability: true
