@@ -56,3 +56,4 @@ jobs:
           service: sdk-cdk-task-import-service-lu412qoq
           cluster: sdk-cdk-git-first-cluster
           wait-for-service-stability: true
+          
