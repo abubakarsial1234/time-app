@@ -26,7 +26,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sdk-cdk-import-ecr
+          ECR_REPOSITORY: sdk-cdk-import-ecr  # ✅ ECR Repo Name Confirmed
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -37,9 +37,9 @@ jobs:
 
       - name: Download Task Definition
         run: |
-          # ✅ CORRECTED: Naya Service Name jo aapki latest screenshot (image_4315c0.png) mein hai
-          SERVICE_NAME="sdk-cdk-task-import-service-h08by5gd"
-          CLUSTER_NAME="sdk-cdk-git-first-cluster"
+          # ✅ CORRECTED: Naye Service aur Cluster ke naam (image_0249cd.png ke mutabik)
+          SERVICE_NAME="sdk-cdk-task-import-service-yxhfaxmw"
+          CLUSTER_NAME="sdk-cdk-first-cluster"
 
           # 1. Latest Task ARN retrieve karein
           TASK_DEF_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME --query "services[0].taskDefinition" --output text)
@@ -66,7 +66,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          # ✅ CORRECTED: Naya Service Name yahan bhi update kiya hai
-          service: sdk-cdk-task-import-service-h08by5gd
-          cluster: sdk-cdk-git-first-cluster
+          # ✅ CORRECTED: Deploy step mein bhi naye naam update kiye hain
+          service: sdk-cdk-task-import-service-yxhfaxmw
+          cluster: sdk-cdk-first-cluster
           wait-for-service-stability: true
