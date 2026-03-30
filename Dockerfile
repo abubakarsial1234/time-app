@@ -1,10 +1,8 @@
-# Base image
-FROM public.ecr.aws/docker/library/python:3.11-slim
+# --- CHANGE: AWS ki bajaye Google Mirror use karein ---
+FROM mirror.gcr.io/library/python:3.11-slim
 
-# --- NAYI LINE (Ye add karein) ---
-# Is se logs foran CloudWatch mein aayenge aur buffer nahi honge
+# Baki saara code bilkul sahi hai, isay wese hi rehne dein
 ENV PYTHONUNBUFFERED=1
-# ---------------------------------
 
 # Set working directory
 WORKDIR /app
@@ -19,10 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # App code copy karein
 COPY app.py .
 
-# ECS ke liye Port 80 expose karein
+# Port 80 expose karein
 EXPOSE 80
 
 # App start karein
 CMD ["python", "app.py"]
-
-
