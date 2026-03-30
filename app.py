@@ -60,17 +60,14 @@ def get_sunrise_sunset(city_name):
     if city_name not in WORLD_CITIES:
         return {"sunrise": "07:00", "sunset": "19:00", "duration": "12h 00m"}
     
-    # Simplified sunrise/sunset calculation
-    # In a real app, you'd use a proper API like OpenWeatherMap
     timezone = pytz.timezone(WORLD_CITIES[city_name]["timezone"])
     now = datetime.now(timezone)
     hour = now.hour
     
-    # Basic seasonal adjustment (very simplified)
-    if 3 <= now.month <= 9:  # Spring/Summer
+    if 3 <= now.month <= 9:  
         sunrise_hour = 6
         sunset_hour = 20
-    else:  # Fall/Winter
+    else:  
         sunrise_hour = 7
         sunset_hour = 18
     
@@ -86,14 +83,9 @@ def get_sunrise_sunset(city_name):
 
 @app.route('/')
 def index():
-    """Main page showing world clock interface"""
-    # Get current time for Karachi (Pakistan) as the main display
     pakistan_time = get_city_time("Karachi")
-    pakistan_timezone = pytz.timezone(WORLD_CITIES["Karachi"]["timezone"])
-    now_pakistan = datetime.now(pakistan_timezone)
     pakistan_sunrise_sunset = get_sunrise_sunset("Karachi")
     
-    # Get times for featured cities
     featured_cities = ["Karachi", "London", "New York", "Dubai"]
     city_times = {}
     
@@ -115,313 +107,310 @@ def index():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>TimeSpot - World Clock</title>
+        <title>TimeSpot - Premium World Clock</title>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
+            :root {{
+                --bg-gradient: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
+                --card-bg: rgba(255, 255, 255, 0.03);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --text-main: #ffffff;
+                --text-muted: rgba(255, 255, 255, 0.7);
+                --accent: #3DDC84;
+                --accent-glow: rgba(61, 220, 132, 0.3);
+                --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            }}
+
             * {{
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+                font-family: 'Outfit', sans-serif;
             }}
             
             body {{ 
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                /* --- CHANGED: Dark Green Gradient --- */
-                background: linear-gradient(135deg, #011F13 0%, #0A2D27 50%, #1E3A3A 100%);
+                background: var(--bg-gradient);
                 min-height: 100vh;
-                color: #ffffff;
-                transition: all 0.3s ease;
+                color: var(--text-main);
+                transition: all 0.5s ease;
                 position: relative;
                 overflow-x: hidden;
             }}
             
-            body::before {{
+            /* Animated Background Glowing Orbs */
+            body::before, body::after {{
                 content: '';
                 position: fixed;
-                top: 0;
-                right: 0;
-                width: 500px;
-                height: 500px;
-                /* --- CHANGED: Green Glow --- */
-                background: radial-gradient(circle, rgba(61, 220, 132, 0.2) 0%, transparent 70%);
-                border-radius: 80%;
+                width: 600px;
+                height: 600px;
+                border-radius: 50%;
+                filter: blur(100px);
                 z-index: 0;
+                animation: float 20s infinite alternate ease-in-out;
+            }}
+            
+            body::before {{
+                top: -100px;
+                right: -100px;
+                background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
             }}
             
             body::after {{
-                content: '';
-                position: fixed;
-                bottom: 0;
-                right: -100px;
-                width: 500px;
-                height: 500px;
-                /* --- CHANGED: Green Glow --- */
-                background: radial-gradient(circle, rgba(61, 220, 132, 0.15) 0%, transparent 70%);
-                border-radius: 80%;
-                z-index: 0;
+                bottom: -150px;
+                left: -150px;
+                background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+                animation-delay: -10s;
+            }}
+
+            @keyframes float {{
+                0% {{ transform: translate(0, 0) scale(1); }}
+                50% {{ transform: translate(-50px, 50px) scale(1.1); }}
+                100% {{ transform: translate(50px, -50px) scale(0.9); }}
             }}
             
+            /* White Theme Colors */
             body.white-theme {{
-                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                color: #333;
+                --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                --card-bg: rgba(255, 255, 255, 0.7);
+                --card-border: rgba(255, 255, 255, 1);
+                --text-main: #0f172a;
+                --text-muted: #64748b;
+                --accent: #059669;
+                --accent-glow: rgba(5, 150, 105, 0.15);
+                --glass-shadow: 0 10px 30px 0 rgba(148, 163, 184, 0.3);
             }}
             
-            body.white-theme::before,
-            body.white-theme::after {{
-                display: none;
-            }}
-            
-            /* This orange-theme is no longer used by buttons, but kept for reference */
+            /* Orange/Sunset Theme Colors */
             body.orange-theme {{
-                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-                color: #333;
-            }}
-            
-            body.orange-theme::before,
-            body.orange-theme::after {{
-                display: none;
+                --bg-gradient: linear-gradient(135deg, #2d1305 0%, #7c2d12 100%);
+                --card-bg: rgba(255, 255, 255, 0.05);
+                --card-border: rgba(255, 255, 255, 0.15);
+                --text-main: #ffffff;
+                --text-muted: rgba(255, 255, 255, 0.8);
+                --accent: #fb923c;
+                --accent-glow: rgba(251, 146, 60, 0.3);
+                --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             }}
             
             .container {{
-                max-width: 1000px;
+                max-width: 1100px;
                 margin: 0 auto;
-                padding: 20px;
+                padding: 30px 20px;
                 position: relative;
                 z-index: 1;
             }}
             
+            /* Enhanced Header */
             .header {{
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 40px;
-                background: rgba(255, 255, 255, 0.05);
-                backdrop-filter: blur(20px);
-                padding: 20px;
-                border-radius: 20px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 50px;
+                background: var(--card-bg);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                padding: 15px 25px;
+                border-radius: 100px;
+                border: 1px solid var(--card-border);
+                box-shadow: var(--glass-shadow);
                 transition: all 0.3s ease;
             }}
             
-            body.white-theme .header {{
-                background: rgba(255, 255, 255, 0.8);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-            }}
-
             .logo {{
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
                 font-size: 24px;
-                font-weight: bold;
-                color: white;
+                font-weight: 700;
+                color: var(--text-main);
+                letter-spacing: -0.5px;
             }}
             
             .logo-icon {{
-                width: 40px;
-                height: 40px;
-                /* --- CHANGED: Accent Color --- */
-                background: #3DDC84;
+                width: 42px;
+                height: 42px;
+                background: var(--accent);
                 border-radius: 50%;
                 display: flex; 
                 align-items: center;
                 justify-content: center; 
-                font-size: 20px;
-                color: #111;
+                font-size: 22px;
+                color: #fff;
+                box-shadow: 0 0 15px var(--accent-glow);
             }}
             
+            /* Enhanced Search Bar */
             .search-bar {{
                 flex: 1;
-                max-width: 700px;
+                max-width: 450px;
                 margin: 0 20px;
+                position: relative;
             }}
             
             .search-bar input {{
                 width: 100%;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 25px;
-                background: rgba(255, 255, 255, 0.9);
-                font-size: 16px;
+                padding: 14px 20px 14px 45px;
+                border: 1px solid var(--card-border);
+                border-radius: 50px;
+                background: rgba(255, 255, 255, 0.05);
+                font-size: 15px;
                 outline: none;
-                color: #333;
-            }}
-            
-            body.white-theme .search-bar input {{
-                background: rgba(255, 255, 255, 0.95);
-                border: 1px solid rgba(0, 0, 0, 0.1);
+                color: var(--text-main);
+                transition: all 0.3s ease;
             }}
 
+            body.white-theme .search-bar input {{
+                background: rgba(255, 255, 255, 0.8);
+            }}
+            
+            .search-bar input:focus {{
+                background: rgba(255, 255, 255, 0.1);
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px var(--accent-glow);
+            }}
+
+            .search-bar::before {{
+                content: '🔍';
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 16px;
+                opacity: 0.6;
+            }}
+            
             .header-buttons {{
                 display: flex;
-                gap: 15px;
+                gap: 12px;
                 align-items: center;
             }}
             
             .theme-controls {{
                 display: flex;
-                gap: 10px;
-                align-items: center; 
+                gap: 8px;
+                background: rgba(0,0,0,0.1);
+                padding: 5px;
+                border-radius: 30px;
                 margin-right: 15px;
             }}
             
+            body.white-theme .theme-controls {{ background: rgba(0,0,0,0.05); }}
+
             .theme-btn {{
                 padding: 8px 16px;
-                /* --- CHANGED: Accent Color --- */
-                border: 2px solid #3DDC84;
+                border: none;
                 border-radius: 20px;
                 background: transparent;
-                color: white;
+                color: var(--text-muted);
                 font-weight: 500;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                font-size: 12px;
-                min-width: 60px;
+                font-size: 13px;
             }}
             
-            .theme-btn:hover {{
-                /* --- CHANGED: Accent Color Glow --- */
-                background: rgba(61, 220, 132, 0.1);
-            }}
+            .theme-btn:hover {{ color: var(--text-main); }}
             
             .theme-btn.active {{
-                /* --- CHANGED: Accent Color --- */
-                background: #3DDC84;
-                color: #111;
-            }}
-            
-            .theme-btn.white {{
-                /* --- CHANGED: Accent Color --- */
-                border-color: #3DDC84;
-                color: #333;
-                background: white;
-            }}
-            
-            .theme-btn.white:hover {{
-                background: #f0f0f0;
-            }}
-            
-            .theme-btn.white.active {{
-                background: white;
-                color: #333;
-                /* --- CHANGED: Accent Color --- */
-                border-color: #3DDC84;
-            }}
-            
-            .theme-btn.dark {{
-                /* --- CHANGED: Accent Color --- */
-                border-color: #3DDC84;
-                color: white;
-                background: transparent;
-            }}
-            
-            .theme-btn.dark:hover {{
-                /* --- CHANGED: Accent Color Glow --- */
-                background: rgba(61, 220, 132, 0.1);
-            }}
-            
-            .theme-btn.dark.active {{
-                /* --- CHANGED: Accent Color --- */
-                background: #3DDC84;
-                color: #111;
+                background: var(--card-bg);
+                color: var(--text-main);
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                border: 1px solid var(--card-border);
             }}
             
             .btn {{
-                padding: 10px 20px;
-                border: 2px solid white;
-                border-radius: 25px;
-                background: transparent;
-                color: white;
-                font-weight: 500;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 30px;
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--text-main);
+                font-weight: 600;
+                font-size: 14px;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                border: 1px solid var(--card-border);
             }}
             
+            .btn-primary {{
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                box-shadow: 0 4px 15px var(--accent-glow);
+            }}
+
             .btn:hover {{
-                background: white;
-                /* --- CHANGED: Accent Color --- */
-                color: #0A2D27;
+                transform: translateY(-2px);
+                background: rgba(255, 255, 255, 0.2);
+            }}
+
+            .btn-primary:hover {{
+                background: var(--accent);
+                filter: brightness(1.1);
             }}
             
+            /* Premium Main Clock Area */
             .main-clock {{
-                background: rgba(0, 0, 0, 0.4);
-                border-radius: 30px;
-                padding: 60px;
-                margin-bottom: 40px;
+                background: var(--card-bg);
+                border-radius: 40px;
+                padding: 70px 40px;
+                margin-bottom: 50px;
                 text-align: center;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-                            0 0 0 1px rgba(61, 220, 132, 0.2),
-                            inset 0 1px 0 rgba(61, 220, 132, 0.1);
+                box-shadow: var(--glass-shadow);
                 backdrop-filter: blur(20px);
-                transition: all 0.3s ease;
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid var(--card-border);
                 position: relative;
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                overflow: hidden;
             }}
             
             .main-clock::before {{
                 content: '';
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-                /* --- CHANGED: Accent Color --- */
-                background: linear-gradient(90deg, transparent 0%, #3DDC84 50%, transparent 100%);
-                border-radius: 30px 30px 0 0;
-            }}
-            
-            body.white-theme .main-clock {{
-                background: rgba(255, 255, 255, 0.98);
-                color: #333;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-            }}
-            
-            body.white-theme .main-clock::before {{
-                /* --- CHANGED: Accent Color --- */
-                background: linear-gradient(90deg, transparent 0%, #3DDC84 50%, transparent 100%);
+                top: 0; left: 0; right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, transparent, var(--accent), transparent);
+                opacity: 0.8;
             }}
             
             .main-time {{
-                font-size: 120px;
+                font-size: 140px;
                 font-weight: 300;
-                color: white;
-                margin-bottom: 20px;
-                letter-spacing: -2px;
+                color: var(--text-main);
+                margin-bottom: 10px;
+                letter-spacing: -4px;
+                font-variant-numeric: tabular-nums;
+                text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                line-height: 1;
             }}
             
-            body.white-theme .main-time {{
-                color: #333;
-            }}
-
             .main-location {{
-                font-size: 32px;
-                color: white;
-                margin-bottom: 10px;
-                font-weight: 500;
+                font-size: 36px;
+                color: var(--text-main);
+                margin-bottom: 8px;
+                font-weight: 600;
+                letter-spacing: -0.5px;
             }}
             
             .main-date {{
-                font-size: 24px;
-                color: rgba(255, 255, 255, 0.8);
-                margin-bottom: 30px;
+                font-size: 20px;
+                color: var(--text-muted);
+                margin-bottom: 25px;
+                font-weight: 400;
             }}
             
             .sun-info {{
-                font-size: 18px;
-                color: white;
-                margin-bottom: 20px;
+                display: inline-flex;
+                align-items: center;
+                gap: 15px;
+                background: rgba(0,0,0,0.2);
+                padding: 12px 25px;
+                border-radius: 50px;
+                font-size: 16px;
+                color: var(--text-main);
+                margin-bottom: 30px;
+                border: 1px solid var(--card-border);
             }}
-            
-            body.white-theme .main-location,
-            body.white-theme .main-date,
-            body.white-theme .sun-info {{
-                color: #333;
-            }}
-            
-            body.white-theme .main-date {{
-                color: #666;
-            }}
+
+            body.white-theme .sun-info {{ background: rgba(255,255,255,0.5); }}
             
             .format-toggles {{
                 display: flex;
@@ -430,232 +419,167 @@ def index():
             }}
             
             .format-btn {{
-                padding: 8px 16px;
-                /* --- CHANGED: Accent Color --- */
-                border: 2px solid #3DDC84;
+                padding: 8px 20px;
+                border: 1px solid var(--card-border);
                 border-radius: 20px;
                 background: transparent;
-                color: white;
+                color: var(--text-muted);
                 cursor: pointer;
                 transition: all 0.3s ease;
-                font-size: 12px;
-                min-width: 50px;
+                font-weight: 600;
+                font-size: 14px;
             }}
             
             .format-btn.active {{
-                /* --- CHANGED: Accent Color --- */
-                background: #3DDC84;
-                color: #111;
-                border-color: #3DDC84;
-            }}
-            
-            .format-btn:not(.active) {{
-                background: transparent;
-                color: white;
-                /* --- CHANGED: Accent Color --- */
-                border-color: #3DDC84;
-            }}
-            
-            body.white-theme .format-btn {{
-                color: #333;
-                border-color: #ddd;
-            }}
-            
-            body.white-theme .format-btn.active {{
-                background: #333;
-                color: white;
-                border-color: #333;
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+                box-shadow: 0 4px 15px var(--accent-glow);
             }}
             
             .slogan {{
                 text-align: center;
-                font-size: 24px;
-                color: white;
-                margin-bottom: 40px;
+                font-size: 28px;
+                margin-bottom: 50px;
                 font-weight: 300;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                background: linear-gradient(to right, var(--text-main), var(--text-muted));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }}
             
+            /* Enhanced Grid & Cards */
             .cities-grid {{
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 20px;
-                margin-bottom: 40px;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 25px;
+                margin-bottom: 50px;
             }}
             
             .city-card {{
-                background: rgba(0, 0, 0, 0.4);
-                border-radius: 20px;
-                padding: 30px;
+                background: var(--card-bg);
+                border-radius: 24px;
+                padding: 30px 25px;
                 text-align: center; 
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: white;
-            }}
-            
-            .city-card.featured {{
-                /* --- CHANGED: Accent Color Glow --- */
-                background: rgba(61, 220, 132, 0.1);
-                border: 1px solid rgba(61, 220, 132, 0.2);
-            }}
-            
-            body.white-theme .city-card {{
-                background: rgba(255, 255, 255, 0.98);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                color: #333;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid var(--card-border);
+                box-shadow: var(--glass-shadow);
+                position: relative;
+                overflow: hidden;
             }}
             
             .city-card:hover {{
-                transform: translateY(-5px);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+                transform: translateY(-10px) scale(1.02);
+                border-color: rgba(255, 255, 255, 0.3);
+            }}
+
+            .city-card::after {{
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent 60%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }}
+
+            .city-card:hover::after {{ opacity: 1; }}
+            
+            .city-card.featured {{
+                border: 1px solid var(--accent);
+                box-shadow: 0 10px 30px var(--accent-glow);
             }}
             
             .city-time {{
-                font-size: 48px;
+                font-size: 46px;
                 font-weight: 300;
-                margin-bottom: 10px;
+                margin-bottom: 5px;
+                color: var(--text-main);
+                font-variant-numeric: tabular-nums;
             }}
             
             .city-name {{
-                font-size: 20px;
-                font-weight: 500;
-                margin-bottom: 5px;
+                font-size: 22px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: var(--text-main);
             }}
             
             .city-country {{
                 font-size: 14px;
-                color: #888;
-                margin-bottom: 10px;
+                color: var(--text-muted);
+                margin-bottom: 15px;
+                font-weight: 400;
             }}
             
             .city-time-of-day {{
-                font-size: 14px;
-                padding: 5px 12px;
-                border-radius: 15px;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 6px 14px;
+                border-radius: 20px;
                 display: inline-block;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }}
             
-            .city-time-of-day.day {{
-                background: #ffeb3b;
-                color: #333;
-            }}
+            .city-time-of-day.day {{ background: rgba(253, 224, 71, 0.2); color: #fde047; }}
+            .city-time-of-day.night {{ background: rgba(56, 189, 248, 0.2); color: #38bdf8; }}
+            .city-time-of-day.morning {{ background: rgba(251, 146, 60, 0.2); color: #fb923c; }}
+            .city-time-of-day.evening {{ background: rgba(192, 132, 252, 0.2); color: #c084fc; }}
             
-            .city-time-of-day.night {{
-                background: #2196f3;
-                color: white;
-            }}
-            
-            .city-time-of-day.morning {{
-                background: #ff9800;
-                color: white;
-            }}
-            
-            .city-time-of-day.evening {{
-                background: #9c27b0;
-                color: white;
-            }}
-            
+            body.white-theme .city-time-of-day.day {{ background: #fef08a; color: #854d0e; }}
+            body.white-theme .city-time-of-day.night {{ background: #bae6fd; color: #075985; }}
+            body.white-theme .city-time-of-day.morning {{ background: #fed7aa; color: #9a3412; }}
+            body.white-theme .city-time-of-day.evening {{ background: #e9d5ff; color: #581c87; }}
+
             .utc-offset {{
-                font-size: 12px;
-                color: #666;
-                font-family: monospace;
+                font-size: 13px;
+                color: var(--text-muted);
+                background: rgba(0,0,0,0.1);
+                padding: 4px 10px;
+                border-radius: 8px;
             }}
             
             .add-city {{
-                background: rgba(255, 255, 255, 0.1);
-                border: 2px dashed rgba(255, 255, 255, 0.5);
-                border-radius: 20px;
-                padding: 30px;
-                text-align: center;
-                color: white;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
+                background: transparent;
+                border: 2px dashed var(--card-border);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                opacity: 0.7;
             }}
             
             .add-city:hover {{
-                background: rgba(255, 255, 255, 0.2);
-                border-color: rgba(255, 255, 255, 0.8);
+                opacity: 1;
+                border-color: var(--text-muted);
+                background: rgba(255,255,255,0.05);
             }}
             
             .add-city-icon {{
-                font-size: 48px;
-                margin-bottom: 15px;
+                font-size: 40px;
+                margin-bottom: 10px;
+                font-weight: 300;
             }}
             
             .add-city-text {{
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: 500;
             }}
             
-            .all-cities {{
-                background: rgba(255, 255, 255, 0.95);
-                border-radius: 20px;
-                padding: 30px;
-                backdrop-filter: blur(10px);
+            /* Responsive */
+            @media (max-width: 900px) {{
+                .header {{ flex-wrap: wrap; border-radius: 20px; }}
+                .search-bar {{ order: 3; max-width: 100%; margin: 15px 0 0 0; }}
             }}
-            
-            .all-cities h2 {{
-                font-size: 28px;
-                margin-bottom: 20px;
-                color: #333;
-                text-align: center;
-            }}
-            
-            .cities-list {{
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 15px;
-            }}
-            
-            .city-item {{
-                background: #f8f9fa;
-                padding: 15px;
-                border-radius: 10px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                border: 2px solid transparent;
-            }}
-            
-            .city-item:hover {{
-                background: #e9ecef;
-                /* --- CHANGED: Accent Color --- */
-                border-color: #3DDC84;
-            }}
-            
-            .city-item-name {{
-                font-weight: 500;
-                margin-bottom: 5px;
-                color: #333;
-            }}
-            
-            .city-item-country {{
-                font-size: 12px;
-                color: #666;
-            }}
-            
+
             @media (max-width: 768px) {{
-                .main-time {{
-                    font-size: 80px;
-                }}
-                
-                .header {{
-                    flex-direction: column;
-                    gap: 20px;
-                }}
-                
-                .search-bar {{
-                margin: 0; 
-                    max-width: 100%;
-                }}
-                
-                .cities-grid {{
-                    grid-template-columns: 1fr;
-                }}
+                .main-time {{ font-size: 80px; }}
+                .main-location {{ font-size: 28px; }}
+                .main-clock {{ padding: 40px 20px; }}
+                .slogan {{ font-size: 20px; }}
             }}
         </style>
     </head>
@@ -666,17 +590,17 @@ def index():
                     <div class="logo-icon">🕐</div>
                     <span>TimeSpot</span>
                 </div>
-                <div class="search-bar">
-                    <input type="text" placeholder="Q Search" id="searchInput">
-                </div>
                 <div class="header-buttons">
                     <div class="theme-controls">
-                        <button class="theme-btn" onclick="setTheme('orange')">Orange</button>
-                        <button class="theme-btn white" onclick="setTheme('white')">White</button>
-                        <button class="theme-btn dark active" onclick="setTheme('dark')">🌙 Dark</button>
+                        <button class="theme-btn" onclick="setTheme('orange')">Sunset</button>
+                        <button class="theme-btn" onclick="setTheme('white')">Light</button>
+                        <button class="theme-btn active" onclick="setTheme('dark')">Dark</button>
                     </div>
                     <button class="btn">Log In</button>
-                    <button class="btn">Get the App</button>
+                    <button class="btn btn-primary">Get App</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for cities or timezones..." id="searchInput">
                 </div>
             </div>
             
@@ -685,7 +609,10 @@ def index():
                 <div class="main-location">Karachi, {WORLD_CITIES["Karachi"]["country"]}</div>
                 <div class="main-date">{pakistan_time["date"]}</div>
                 <div class="sun-info">
-                    Sun ☀️: {pakistan_sunrise_sunset["sunrise"]} - {pakistan_sunrise_sunset["sunset"]} ({pakistan_sunrise_sunset["duration"]})
+                    <span>☀️ {pakistan_sunrise_sunset["sunrise"]}</span>
+                    <span>-</span>
+                    <span>🌙 {pakistan_sunrise_sunset["sunset"]}</span>
+                    <span style="opacity:0.6; font-size: 14px; margin-left:10px;">({pakistan_sunrise_sunset["duration"]})</span>
                 </div>
                 <div class="format-toggles">
                     <button class="format-btn" onclick="toggleFormat('12h')">12h</button>
@@ -694,7 +621,7 @@ def index():
             </div>
             
             <div class="slogan">
-                Life moves fast. Stay on time and enjoy every moment!
+                Life moves fast. Stay on time, beautifully.
             </div>
             
             <div class="cities-grid">
@@ -704,25 +631,14 @@ def index():
                     <div class="city-name">{city}</div>
                     <div class="city-country">{city_times[city]["country"]}</div>
                     <div class="city-time-of-day {city_times[city]["time_of_day"].lower()}">{city_times[city]["time_of_day"]}</div>
-                    <div class="utc-offset">UTC{city_times[city]["utc_offset"]}</div>
+                    <br>
+                    <span class="utc-offset">UTC{city_times[city]["utc_offset"]}</span>
                 </div>
                 ''' for city in city_times.keys()])}
                 
-                <div class="add-city" onclick="showAllCities()">
+                <div class="city-card add-city" onclick="document.getElementById('searchInput').focus()">
                     <div class="add-city-icon">+</div>
-                    <div class="add-city-text">Add Another City</div>
-                </div>
-            </div>
-            
-            <div class="all-cities" id="allCities" style="display: none;">
-                <h2>All Available Cities</h2>
-                <div class="cities-list">
-                    {''.join([f'''
-                    <div class="city-item" onclick="setMainCity('{city}')">
-                        <div class="city-item-name">{city}</div>
-                        <div class="city-item-country">{data["country"]}</div>
-                    </div>
-                    ''' for city, data in WORLD_CITIES.items()])}
+                    <div class="add-city-text">Add City</div>
                 </div>
             </div>
         </div>
@@ -731,7 +647,6 @@ def index():
             let currentFormat = '24h';
             let updateInterval;
             let currentMainCity = 'Karachi';
-            let currentTheme = 'dark';
 
             function updateTime() {{
                 fetch(`/api/time/${{currentMainCity}}`)
@@ -743,21 +658,19 @@ def index():
             }}
             
             function setTheme(theme) {{
-                document.body.className = ''; // Clear all classes
+                document.body.className = ''; 
                 if (theme !== 'dark') {{
                    document.body.classList.add(theme + '-theme');
                 }}
                 
-                // Update theme button states
                 document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`.theme-btn[onclick="setTheme('${{theme}}')"]`).classList.add('active');
+                event.target.classList.add('active');
             }}
             
             function toggleFormat(format) {{
                 currentFormat = format;
                 document.querySelectorAll('.format-btn').forEach(btn => btn.classList.remove('active'));
                 event.target.classList.add('active');
-                // Format toggle logic would go here
             }}
             
             function setMainCity(city) {{
@@ -768,76 +681,18 @@ def index():
                         document.getElementById('mainTime').textContent = data.time;
                         document.querySelector('.main-location').textContent = `${{city}}, ${{data.country || ''}}`;
                         document.querySelector('.main-date').textContent = data.date;
-                        document.querySelector('.sun-info').innerHTML = 
-                            `Sun ☀️: ${{data.sunrise_sunset.sunrise}} - ${{data.sunrise_sunset.sunset}} (${{data.sunrise_sunset.duration}})`;
+                        
+                        // Update UI to highlight selected
+                        document.querySelectorAll('.city-card').forEach(c => c.classList.remove('featured'));
+                        // Simplistic matching for demo
+                        let cards = document.querySelectorAll('.city-name');
+                        cards.forEach(c => {{
+                            if(c.textContent === city) c.parentElement.classList.add('featured');
+                        }});
                     }})
                     .catch(error => console.error('Error:', error));
-                
-                // Hide all cities section if open
-                document.getElementById('allCities').style.display = 'none';
             }}
             
-            function showAllCities() {{
-                const allCities = document.getElementById('allCities');
-                allCities.style.display = allCities.style.display === 'none' ? 'block' : 'none';
-            }}
-            
-            // Enhanced search functionality
-            document.getElementById('searchInput').addEventListener('input', function(e) {{
-                const searchTerm = e.target.value.toLowerCase().trim();
-                
-                if (searchTerm.length === 0) {{
-                    // Show all cities when search is empty
-                    document.querySelectorAll('.city-item').forEach(item => {{
-                        item.style.display = 'block';
-                    }});
-                    document.querySelectorAll('.city-card').forEach(card => {{
-                        card.style.display = 'block';
-                    }});
-                    return;
-                }}
-                
-                // Search in all cities section
-                const cityItems = document.querySelectorAll('.city-item');
-                cityItems.forEach(item => {{
-                    const cityName = item.querySelector('.city-item-name').textContent.toLowerCase();
-                    const country = item.querySelector('.city-item-country').textContent.toLowerCase();
-                    
-                    if (cityName.includes(searchTerm) || country.includes(searchTerm)) {{
-                        item.style.display = 'block';
-                    }} else {{
-                        item.style.display = 'none';
-                    }}
-                }});
-                
-                // Search in featured cities
-                const cityCards = document.querySelectorAll('.city-card');
-                cityCards.forEach(card => {{
-                    const cityName = card.querySelector('.city-name').textContent.toLowerCase();
-                    const country = card.querySelector('.city-country').textContent.toLowerCase();
-                    
-                    if (cityName.includes(searchTerm) || country.includes(searchTerm)) {{
-                        card.style.display = 'block';
-                    }} else {{
-                        card.style.display = 'none';
-                    }}
-                }});
-                
-                // Auto-select first matching city if found
-                const matchingCities = Array.from(cityItems).filter(item => 
-                    item.style.display !== 'none'
-                );
-                
-                if (matchingCities.length === 1 && searchTerm.length > 2) {{
-                    const cityName = matchingCities[0].querySelector('.city-item-name').textContent;
-                    setMainCity(cityName);
-                }}
-            }});
-            
-            // Set initial theme
-            setTheme('dark');
-            
-            // Update time every second
             updateInterval = setInterval(updateTime, 1000);
         </script>
     </body>
@@ -847,12 +702,10 @@ def index():
 
 @app.route('/api/time/<city>')
 def get_time_api(city):
-    """API endpoint to get time for a specific city"""
     time_data = get_city_time(city)
     if not time_data:
         return jsonify({"error": "City not found"}), 404
     
-    # Add time of day and sunrise/sunset info
     timezone = pytz.timezone(WORLD_CITIES[city]["timezone"])
     now = datetime.now(timezone)
     time_data["time_of_day"] = get_time_of_day(now.hour)
@@ -863,12 +716,7 @@ def get_time_api(city):
 
 @app.route('/api/cities')
 def get_cities():
-    """API endpoint to get all available cities"""
     return jsonify(WORLD_CITIES)
 
 if __name__ == '__main__':
-    # Port 5000 se badal kar 80 kar diya taake ECS se match kare
     app.run(host='0.0.0.0', port=80, debug=False)
-
-
-
