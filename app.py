@@ -139,11 +139,11 @@ def index():
                 position: fixed;
                 top: 0;
                 right: 0;
-                width: 300px;
-                height: 300px;
+                width: 500px;
+                height: 500px;
                 /* --- CHANGED: Green Glow --- */
                 background: radial-gradient(circle, rgba(61, 220, 132, 0.2) 0%, transparent 70%);
-                border-radius: 50%;
+                border-radius: 80%;
                 z-index: 0;
             }}
             
@@ -152,11 +152,11 @@ def index():
                 position: fixed;
                 bottom: 0;
                 right: -100px;
-                width: 400px;
-                height: 400px;
+                width: 500px;
+                height: 500px;
                 /* --- CHANGED: Green Glow --- */
                 background: radial-gradient(circle, rgba(61, 220, 132, 0.15) 0%, transparent 70%);
-                border-radius: 50%;
+                border-radius: 80%;
                 z-index: 0;
             }}
             
@@ -182,7 +182,7 @@ def index():
             }}
             
             .container {{
-                max-width: 1200px;
+                max-width: 1000px;
                 margin: 0 auto;
                 padding: 20px;
                 position: relative;
@@ -231,7 +231,7 @@ def index():
             
             .search-bar {{
                 flex: 1;
-                max-width: 400px;
+                max-width: 700px;
                 margin: 0 20px;
             }}
             
