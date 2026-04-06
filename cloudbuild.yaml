@@ -7,7 +7,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image']
 
-  # 3. Deploy: Cloud Run (ECS Service ki tarah) par deploy karna
+  # 3. Deploy: Cloud Run par deploy karna
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -21,3 +21,7 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+
+# Ye block add karne se error khatam ho jayega
+options:
+  logging: CLOUD_LOGGING_ONLY
