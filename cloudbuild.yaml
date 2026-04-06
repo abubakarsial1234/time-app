@@ -8,6 +8,7 @@ steps:
     args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo-ecs/time-app-image']
 
   # 3. Deploy: Cloud Run (ECS Service ki tarah) par deploy karna
+  # 3. Deploy: Cloud Run par deploy karna
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -20,6 +21,8 @@ steps:
       - 'us-central1'
       - '--platform'
       - 'managed'
+      - '--port'
+      - '80'  # <--- Ye line lazmi add karein
       - '--allow-unauthenticated'
 
 # Logs ka error khatam karne ke liye
