@@ -1,0 +1,23 @@
+steps:
+  # 1. Docker Build: Image banana
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image', '.']
+
+  # 2. Docker Push: Image ko Registry mein bhejna
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image']
+
+  # 3. Deploy: Cloud Run (ECS Service ki tarah) par deploy karna
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'time-app-service'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
