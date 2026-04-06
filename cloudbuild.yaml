@@ -1,13 +1,13 @@
 steps:
-  # 1. Docker Build: Image banana
+  # 1. Docker Build: Image banana (Repo ka naam yahan use ho raha hai)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo-ecs/time-app-image', '.']
 
   # 2. Docker Push: Image ko Registry mein bhejna
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image']
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo-ecs/time-app-image']
 
-  # 3. Deploy: Cloud Run par deploy karna
+  # 3. Deploy: Cloud Run (ECS Service ki tarah) par deploy karna
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -15,13 +15,13 @@ steps:
       - 'deploy'
       - 'time-app-service'
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo/time-app-image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/time-app-repo-ecs/time-app-image'
       - '--region'
       - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
 
-# Ye block add karne se error khatam ho jayega
+# Logs ka error khatam karne ke liye
 options:
   logging: CLOUD_LOGGING_ONLY
